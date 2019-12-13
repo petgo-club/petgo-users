@@ -1,6 +1,6 @@
 package club.petgo.petgousers.domain;
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,6 +13,12 @@ import java.util.UUID;
 @Data
 @Entity
 public class User {
+
+    public User(String username, String password, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
 
     @Id
     @GeneratedValue(generator = "UUID")

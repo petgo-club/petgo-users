@@ -13,7 +13,8 @@ public class Role {
     @NotEmpty
     private RoleName roleName;
 
-    private enum  RoleName {
+    public enum  RoleName {
+        USER,
         PET_OWNER,
         SERVICE_PROVIDER
     }
