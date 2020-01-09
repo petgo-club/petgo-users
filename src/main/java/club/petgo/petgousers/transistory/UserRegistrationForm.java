@@ -22,14 +22,9 @@ public class UserRegistrationForm {
     private String password;
 
     public User toUser(PasswordEncoder passwordEncoder) {
-        Role role = new Role();
-        role.setRoleName(Role.RoleName.USER);
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
         return new User(
                 this.userName,
-                passwordEncoder.encode(this.password),
-                roles
+                passwordEncoder.encode(this.password)
         );
     }
 }

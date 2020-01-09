@@ -3,20 +3,26 @@ package club.petgo.petgousers.domain;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "role")
 public class Role {
 
-    @Id
-    @Enumerated(EnumType.STRING)
-    public RoleName roleName;
+    public Role(RoleName roleName, User user) {
+        this.roleName = roleName;
+        this.user = user;
+    }
 
-    @ManyToMany(mappedBy = "roles")
-    Set<User> users = new HashSet<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private RoleName roleName;
+
+    @ManyToOne(targetEntity = User.class)
+    private User user;
 
     public enum  RoleName {
         USER,
