@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1")
 public class UserController {
@@ -23,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody UserRegistrationForm form) {
+    public User register(@RequestBody @Valid UserRegistrationForm form) {
         return userRepository.save(form.toUser(passwordEncoder));
     }
 }
