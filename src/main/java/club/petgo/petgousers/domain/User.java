@@ -7,11 +7,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 @Data
 @Entity
+@Table(name = "user")
+@RequiredArgsConstructor
 public class User {
 
     public User(String username, String password, Set<Role> roles) {
@@ -21,24 +24,18 @@ public class User {
     }
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
-    @NotEmpty
     private String username;
 
-    @NotEmpty
     private String password;
 
-    @NotNull
-    @Size(min = 1)
-    @ManyToMany(targetEntity = Role.class)
+    @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_name")
     )
-    private Set<Role> roles;
+    Set<Role> roles = new HashSet<>();
 }
