@@ -21,7 +21,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     @Value("${bound}")
-    private int bound;
+    protected int bound;
 
     private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
@@ -42,10 +42,11 @@ public class UserService {
     }
 
     private String setDefaultUserName(String email) {
-        String defaultUsername = String.format("%s%s", getDefaultUserNameStart(email), getDefaultUserNameEnd());
+        String defaultUserNameStart = getDefaultUserNameStart(email);
+        String defaultUsername = String.format("%s%s", defaultUserNameStart, getDefaultUserNameEnd());
 
         while (userRepository.existsByUserName(defaultUsername)) {
-            defaultUsername = String.format("%s%s", getDefaultUserNameStart(email), getDefaultUserNameEnd());
+            defaultUsername = String.format("%s%s", defaultUserNameStart, getDefaultUserNameEnd());
         }
 
         return defaultUsername;
