@@ -1,29 +1,27 @@
 package club.petgo.petgousers.transistory;
 
-import club.petgo.petgousers.domain.Role;
 import club.petgo.petgousers.domain.User;
 import lombok.Data;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 public class UserRegistrationForm {
 
     @NotEmpty
-    @Size(min = 5)
-    private String userName;
+    @Email
+    private String email;
 
     @NotEmpty
-    @Size(min = 5)
+    @Size(min = 5, max = 64)
     private String password;
 
     public User toUser(PasswordEncoder passwordEncoder) {
         return new User(
-                this.userName,
+                this.email,
                 passwordEncoder.encode(this.password)
         );
     }

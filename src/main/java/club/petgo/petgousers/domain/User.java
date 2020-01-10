@@ -4,16 +4,17 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @RequiredArgsConstructor
-public class User {
+public class User implements Serializable {
 
-    public User(String username, String password) {
-        this.username = username;
+    public User(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
@@ -23,7 +24,7 @@ public class User {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    private String username;
-
+    private String email;
     private String password;
+    private String userName;
 }

@@ -1,12 +1,14 @@
 package club.petgo.petgousers.domain;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
 public class Role {
 
     public Role(RoleName roleName, User user) {
@@ -15,8 +17,10 @@ public class Role {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(updatable = false, nullable = false)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private RoleName roleName;
