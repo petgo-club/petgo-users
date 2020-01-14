@@ -1,6 +1,7 @@
 package club.petgo.petgousers.domain;
 
 import lombok.Data;
+import lombok.NonNull;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class Role {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
+    @NonNull
     private RoleName roleName;
 
     @ManyToOne(targetEntity = User.class)

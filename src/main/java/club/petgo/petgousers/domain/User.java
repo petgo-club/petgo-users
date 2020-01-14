@@ -10,12 +10,13 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "users")
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
 
-    public User(String email, String password) {
+    public User(String email, String password, String userName) {
         this.email = email;
         this.password = password;
+        this.userName = userName;
     }
 
     @Id
@@ -24,7 +25,12 @@ public class User implements Serializable {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
+    @NonNull
     private String email;
+
+    @NonNull
     private String password;
+
+    @NonNull
     private String userName;
 }

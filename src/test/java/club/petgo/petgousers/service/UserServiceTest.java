@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -32,16 +31,18 @@ public class UserServiceTest {
         form.setPassword("password");
         userService.bound = 1000;
         doReturn(new User()).when(mockUserRepository).save(any(User.class));
-        User user = userService.registerNewUser(form);
+        userService.registerNewUser(form);
 
         verify(mockUserRepository, times(1)).save(any(User.class));
         verify(mockRoleRepository, times(1)).save(any(Role.class));
+    }
 
-        /*
-         * Tests that default username is set correctly
-         */
-        assertTrue(user.getUserName().contains(form.getEmail().substring(0, form.getEmail().indexOf('@'))));
-        assertEquals(form.getEmail().substring(0, form.getEmail().indexOf('@')).length() + 3,
-                user.getUserName().length());
+    @Test
+    public void testSetDefaultUserName() {
+        userService.bound = 1000;
+
+        assertTrue(userService.setDefaultUserName("user@gmail.com").contains("user"));
+        assertFalse(userService.setDefaultUserName("user@gmail.com").contains("@gmail.com"));
+        assertEquals(7, userService.setDefaultUserName("user@gmail.com").length());
     }
 }

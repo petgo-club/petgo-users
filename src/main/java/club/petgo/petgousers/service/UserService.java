@@ -34,14 +34,13 @@ public class UserService {
     }
 
     public User registerNewUser(UserRegistrationForm form) {
-        User user =  userRepository.save(form.toUser(passwordEncoder));
-        user.setUserName(setDefaultUserName(form.getEmail()));
+        User user =  userRepository.save(form.toUser(passwordEncoder, setDefaultUserName(form.getEmail())));
         roleRepository.save(new Role(Role.RoleName.USER, user));
         LOGGER.info("Registered new user [{}]", user.getId());
         return user;
     }
 
-    private String setDefaultUserName(String email) {
+    protected String setDefaultUserName(String email) {
         String defaultUserNameStart = getDefaultUserNameStart(email);
         String defaultUsername = String.format("%s%s", defaultUserNameStart, getDefaultUserNameEnd());
 

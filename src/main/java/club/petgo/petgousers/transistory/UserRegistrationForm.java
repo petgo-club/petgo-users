@@ -19,10 +19,11 @@ public class UserRegistrationForm {
     @Size(min = 5, max = 64)
     private String password;
 
-    public User toUser(PasswordEncoder passwordEncoder) {
+    public User toUser(PasswordEncoder passwordEncoder, String defaultUserName) {
         return new User(
                 this.email,
-                passwordEncoder.encode(this.password)
+                passwordEncoder.encode(this.password),
+                defaultUserName
         );
     }
 }
