@@ -36,4 +36,10 @@ public class UserController {
 
         return userService.registerNewUser(form);
     }
+
+    @GetMapping(value = "/hello")
+    @ResponseBody
+    public String hello() {
+        return "Hello petgo!";
+    }
 }
