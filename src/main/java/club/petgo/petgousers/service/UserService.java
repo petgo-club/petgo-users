@@ -1,8 +1,6 @@
 package club.petgo.petgousers.service;
 
-import club.petgo.petgousers.data.RoleRepository;
 import club.petgo.petgousers.data.UserRepository;
-import club.petgo.petgousers.domain.Role;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import java.util.Random;
 public class UserService {
 
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
     @Value("${bound}")
@@ -26,16 +23,15 @@ public class UserService {
     private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public User registerNewUser(UserRegistrationForm form) {
-        User user =  userRepository.save(form.toUser(passwordEncoder, setDefaultUserName(form.getEmail())));
-        roleRepository.save(new Role(Role.RoleName.USER, user));
+        User user = form.toUser(passwordEncoder, setDefaultUserName(form.getEmail()));
+        user.addRole(User.Role.USER);
+        userRepository.save(user);
         LOGGER.info("Registered new user [{}]", user.getId());
         return user;
     }

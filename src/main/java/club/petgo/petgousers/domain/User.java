@@ -5,11 +5,13 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "USER")
 @NoArgsConstructor
 public class User implements Serializable {
 
@@ -33,4 +35,22 @@ public class User implements Serializable {
 
     @NonNull
     private String userName;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "ROLE",
+            joinColumns = @JoinColumn(name = "USER_ID"))
+    @Column(name = "ROLE_NAME")
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public enum  Role {
+        USER,
+        PET_OWNER,
+        SERVICE_PROVIDER
+    }
 }
