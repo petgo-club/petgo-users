@@ -7,7 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.userName = userName;
+        this.enabled = false;
     }
 
     @Id
@@ -45,6 +45,8 @@ public class User implements UserDetails {
     @Column(name = "ROLE_NAME")
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
+
+    private boolean enabled;
 
     public void addRole(Role role) {
         roles.add(role);
@@ -86,7 +88,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     public enum Role {

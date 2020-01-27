@@ -10,8 +10,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.request.WebRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,8 +39,10 @@ public class UserControllerTest {
 
     UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
     UserService mockUserService = Mockito.mock(UserService.class);
+    ApplicationEventPublisher applicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
     UserController userController = new UserController(mockUserService,
-            mockUserRepository);
+            mockUserRepository,
+            applicationEventPublisher);
     UserRegistrationForm form = new UserRegistrationForm();
 
     @Test
@@ -71,9 +75,10 @@ public class UserControllerTest {
     @Test
     public void testRegisterWithExistingEmail() {
         form.setEmail("user@gmail.com");
+        WebRequest request = Mockito.mock(WebRequest.class);
         doReturn(true).when(mockUserRepository).existsByEmail(anyString());
         Exception exception = assertThrows(EmailExistsException.class, () ->
-            userController.register(form)
+            userController.register(form, request)
         );
         assertEquals("Email already in use", exception.getMessage());
     }
