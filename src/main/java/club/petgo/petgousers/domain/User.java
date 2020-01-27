@@ -2,18 +2,20 @@ package club.petgo.petgousers.domain;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
 @Table(name = "USER")
 @NoArgsConstructor
-public class User implements Serializable {
+public class User implements UserDetails {
 
     public User(String email, String password, String userName) {
         this.email = email;
@@ -36,7 +38,7 @@ public class User implements Serializable {
     @NonNull
     private String userName;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "ROLE",
             joinColumns = @JoinColumn(name = "USER_ID"))
@@ -48,7 +50,46 @@ public class User implements Serializable {
         roles.add(role);
     }
 
-    public enum  Role {
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.toString()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return this.userName;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public enum Role {
         USER,
         PET_OWNER,
         SERVICE_PROVIDER

@@ -52,7 +52,7 @@ public class UserService {
     }
 
     private String getDefaultUserNameEnd() {
-        Integer random = new Random().nextInt(bound);
-        return random.toString();
+        int random = new Random().nextInt(bound);
+        return Integer.toString(random);
     }
 }

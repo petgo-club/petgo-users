@@ -14,26 +14,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class RestAuthSuccessHandler
-        extends SimpleUrlAuthenticationSuccessHandler {
+public class RestAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private RequestCache requestCache = new HttpSessionRequestCache();
 
     @Override
-    public void onAuthenticationSuccess(
-            HttpServletRequest request,
+    public void onAuthenticationSuccess( HttpServletRequest request,
             HttpServletResponse response,
-            Authentication authentication)
-            throws ServletException, IOException {
+            Authentication authentication) throws ServletException, IOException {
 
-        SavedRequest savedRequest
-                = requestCache.getRequest(request, response);
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
 
         if (savedRequest == null) {
             clearAuthenticationAttributes(request);
             return;
         }
+
         String targetUrlParam = getTargetUrlParameter();
+
         if (isAlwaysUseDefaultTargetUrl()
                 || (targetUrlParam != null
                 && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
