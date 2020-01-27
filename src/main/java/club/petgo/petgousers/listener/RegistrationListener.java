@@ -8,9 +8,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
     @Autowired
@@ -36,12 +38,12 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         String subject = "Registration Confirmation";
         String confirmationUrl
                 = event.getAppUrl() + "/registrationConfirm.html?token=" + token;
-        String message = messages.getMessage("message.regSucc", null, event.getLocale());
+//        String message = messages.getMessage("message.regSucc", null, event.getLocale());
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText(message + " rn" + "http://localhost:8080" + confirmationUrl);
+        email.setText("message" + " rn" + "http://localhost:8080" + confirmationUrl);
         mailSender.send(email);
     }
 }

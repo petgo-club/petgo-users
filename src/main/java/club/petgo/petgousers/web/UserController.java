@@ -75,7 +75,7 @@ public class UserController {
 
         user.setEnabled(true);
         userService.saveRegisteredUser(user);
-        return "redirect:/login.html?lang=" + request.getLocale().getLanguage();
+        return "Account Activated!";
     }
 
     @GetMapping(value = "/hello")
