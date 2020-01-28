@@ -23,6 +23,9 @@ public class UserService implements IUserService {
     @Value("${bound}")
     protected int bound;
 
+    @Value("${email.expiration}")
+    private long expirationInDays;
+
     private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository,
@@ -62,7 +65,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User getUser(String verificationToken) {
+    public User getUserByToken(String verificationToken) {
         return tokenRepository.findByToken(verificationToken).getUser();
     }
 
@@ -73,8 +76,8 @@ public class UserService implements IUserService {
 
     @Override
     public void createVerificationToken(User user, String token) {
-        VerificationToken myToken = new VerificationToken(token, user);
-        tokenRepository.save(myToken);
+        VerificationToken verificationToken = new VerificationToken(token, user, expirationInDays);
+        tokenRepository.save(verificationToken);
     }
 
     @Override

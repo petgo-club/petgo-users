@@ -1,14 +1,15 @@
 package club.petgo.petgousers.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class VerificationToken {
 
     @Id
@@ -21,17 +22,19 @@ public class VerificationToken {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
-    private Date expiryDate;
+    private LocalDateTime expirationDateTime;
 
-    public VerificationToken(String token, User user) {
+    @Transient
+    private long expirationPeriodInDays;
+
+    public VerificationToken(String token, User user, long expirationPeriodInDays) {
         this.token = token;
         this.user = user;
+        this.expirationPeriodInDays = expirationPeriodInDays;
+        this.expirationDateTime = calculateExpiration();
     }
 
-    private Date calculateExpiryDate(int expiryTimeInMinutes) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Timestamp(cal.getTime().getTime()));
-        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(cal.getTime().getTime());
+    private LocalDateTime calculateExpiration() {
+        return LocalDateTime.now().plusDays(expirationPeriodInDays);
     }
 }

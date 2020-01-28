@@ -7,6 +7,13 @@ spring:
       ddl-auto: create-drop
     show-sql: true
 
+app:
+  version: v1
+
+email:
+  confirmation: /registrationConfirm?token=
+  expiration: 1
+
 # Bound for generating random number for default username ending
 bound: 1000
 
@@ -35,7 +42,12 @@ spring:
           auth: true
           starttls:
             enable: true
+app:
+  url: http://localhost:8081/
 
 ---
 spring:
   profiles: test
+
+app:
+  url: http://localhost:8081/

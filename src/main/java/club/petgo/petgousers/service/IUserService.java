@@ -5,10 +5,7 @@ import club.petgo.petgousers.domain.VerificationToken;
 
 public interface IUserService {
 
-//    User registerNewUserAccount(UserDto accountDto)
-//            throws EmailExistsException;
-//
-    User getUser(String verificationToken);
+    User getUserByToken(String verificationToken);
 
     void saveRegisteredUser(User user);
 
