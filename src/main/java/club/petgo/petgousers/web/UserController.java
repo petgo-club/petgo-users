@@ -31,7 +31,7 @@ public class UserController {
         LOGGER.info("Processing new user [{}] registration request", form.getEmail());
 
         if(userRepository.existsByEmail(form.getEmail())) {
-            throw new EmailExistsException();
+            throw new EmailExistsException(String.format("Email [%s] already in use", form.getEmail()));
         }
 
         return userService.registerNewUser(form);
