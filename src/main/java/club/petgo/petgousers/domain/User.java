@@ -7,7 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,12 +15,6 @@ import java.util.stream.Collectors;
 @Table(name = "USER")
 @NoArgsConstructor
 public class User implements UserDetails {
-
-    public User(String email, String password, String userName) {
-        this.email = email;
-        this.password = password;
-        this.userName = userName;
-    }
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -46,6 +39,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
+    private boolean enabled;
+
+    public User(String email, String password, String userName) {
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.enabled = false;
+    }
+
     public void addRole(Role role) {
         roles.add(role);
     }
@@ -68,7 +70,6 @@ public class User implements UserDetails {
         return this.password;
     }
 
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -86,7 +87,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     public enum Role {
