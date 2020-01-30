@@ -7,10 +7,13 @@ import club.petgo.petgousers.event.OnRegistrationCompleteEvent;
 import club.petgo.petgousers.exception.EmailExistsException;
 import club.petgo.petgousers.service.UserService;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
+import club.petgo.petgousers.transistory.UserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,13 +40,14 @@ public class UserController {
         this.messageSource = messageSource;
     }
 
-    @PostMapping(value = "/register", produces = "application/json")
+    @PostMapping(value = "/registration", produces = "application/json")
     @ResponseBody
-    public User register(@RequestBody @Valid UserRegistrationForm form) throws EmailExistsException {
+    public ResponseEntity<UserResponse> register(@RequestBody @Valid UserRegistrationForm form)
+            throws EmailExistsException {
         LOGGER.info("Processing new user [{}] registration request", form.getEmail());
 
-        if(userRepository.existsByEmail(form.getEmail())) {
-            throw new EmailExistsException(String.format("Email [%s] already in use", form.getEmail()));
+        if (userRepository.existsByEmail(form.getEmail())) {
+            throw new EmailExistsException();
         }
 
         User user = userService.registerNewUser(form);
@@ -54,29 +58,40 @@ public class UserController {
             LOGGER.info("Could not send registration email to [{}]", form.getEmail());
         }
 
-        LOGGER.info("Registration email sent to [{}]", form.getEmail());
-        return user;
+        UserResponse userResponse = new UserResponse(
+                user.getUsername(),
+                user.getEmail(),
+                user.isEnabled());
+
+        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/registrationConfirm")
-    public String confirmRegistration (@RequestParam("token") String token) {
+    @PatchMapping(value = "/registrationConfirm")
+    public ResponseEntity<String> confirmRegistration (@RequestParam("token") String token) {
         VerificationToken verificationToken = userService.getVerificationToken(token);
 
         if (verificationToken == null) {
-            return messageSource.getMessage("registration.invalidToken", null, Locale.ENGLISH);
+            return new ResponseEntity<>(messageSource.getMessage("activation.invalidToken",
+                    null, Locale.ENGLISH),
+                    HttpStatus.OK);
         }
 
         User user = verificationToken.getUser();
 
         if ((verificationToken.getExpirationDateTime().isBefore(LocalDateTime.now()))) {
-            return messageSource.getMessage("registration.expiredToken", null, Locale.ENGLISH);
+            return new ResponseEntity<>(messageSource.getMessage("activation.expiredToken",
+                    null, Locale.ENGLISH),
+                    HttpStatus.OK);
         }
 
         user.setEnabled(true);
         userService.saveRegisteredUser(user);
-        return "Account Activated!";
+        return new ResponseEntity<>(messageSource.getMessage("activation.success",
+                null, Locale.ENGLISH),
+                HttpStatus.OK);
     }
 
+    // Only for testing purposes, to be deleted later
     @GetMapping(value = "/hello")
     @ResponseBody
     public String hello() {

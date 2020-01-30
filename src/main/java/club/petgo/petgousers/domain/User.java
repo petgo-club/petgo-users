@@ -16,13 +16,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class User implements UserDetails {
 
-    public User(String email, String password, String userName) {
-        this.email = email;
-        this.password = password;
-        this.userName = userName;
-        this.enabled = false;
-    }
-
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -48,6 +41,13 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    public User(String email, String password, String userName) {
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.enabled = false;
+    }
+
     public void addRole(Role role) {
         roles.add(role);
     }
@@ -69,7 +69,6 @@ public class User implements UserDetails {
     public String getPassword() {
         return this.password;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

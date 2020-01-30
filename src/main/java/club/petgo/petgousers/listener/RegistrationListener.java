@@ -3,6 +3,8 @@ package club.petgo.petgousers.listener;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.event.OnRegistrationCompleteEvent;
 import club.petgo.petgousers.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -35,6 +37,8 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Value("${email.confirmation}")
     private String confirmation;
 
+    private static Logger LOGGER = LoggerFactory.getLogger(RegistrationListener.class);
+
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
         this.confirmRegistration(event);
@@ -55,5 +59,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         email.setSubject(subject);
         email.setText(message + "\n" + confirmationUrl);
         mailSender.send(email);
+        LOGGER.info("Registration email sent to [{}]", recipientAddress);
     }
 }
