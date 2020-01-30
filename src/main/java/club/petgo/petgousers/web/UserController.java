@@ -51,8 +51,10 @@ public class UserController {
         try {
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user));
         } catch (Exception e) {
-            LOGGER.info("Could not send email to [{}]", form.getEmail());
+            LOGGER.info("Could not send registration email to [{}]", form.getEmail());
         }
+
+        LOGGER.info("Registration email sent to [{}]", form.getEmail());
         return user;
     }
 

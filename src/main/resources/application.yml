@@ -24,7 +24,6 @@ spring:
   datasource:
     url: jdbc:h2:./users
     username: petgo
-    password: petgo
 
   h2:
     console:
@@ -35,7 +34,6 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: petgotest@gmail.com
-    password: petgopetgo
     properties:
       mail:
         smtp:
