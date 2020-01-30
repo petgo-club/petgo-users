@@ -10,8 +10,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.request.WebRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,8 +40,12 @@ public class UserControllerTest {
 
     UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
     UserService mockUserService = Mockito.mock(UserService.class);
+    ApplicationEventPublisher applicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
+    MessageSource messageSource = Mockito.mock(MessageSource.class);
     UserController userController = new UserController(mockUserService,
-            mockUserRepository);
+            mockUserRepository,
+            applicationEventPublisher,
+            messageSource);
     UserRegistrationForm form = new UserRegistrationForm();
 
     @Test

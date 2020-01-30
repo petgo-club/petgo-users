@@ -1,6 +1,7 @@
 package club.petgo.petgousers.service;
 
 import club.petgo.petgousers.data.UserRepository;
+import club.petgo.petgousers.data.VerificationTokenRepository;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,12 @@ public class UserServiceTest {
 
     UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
     PasswordEncoder mockPasswordEncoder = Mockito.mock(PasswordEncoder.class);
+    VerificationTokenRepository mockTokenRepository = Mockito.mock(VerificationTokenRepository.class);
 
     UserService userService = new UserService(
             mockUserRepository,
-            mockPasswordEncoder);
+            mockPasswordEncoder,
+            mockTokenRepository);
 
     UserRegistrationForm form = new UserRegistrationForm();
 
