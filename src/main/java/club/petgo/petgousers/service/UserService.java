@@ -1,9 +1,12 @@
 package club.petgo.petgousers.service;
 
+import club.petgo.petgousers.data.ProfileRepository;
 import club.petgo.petgousers.data.UserRepository;
 import club.petgo.petgousers.data.VerificationTokenRepository;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.domain.VerificationToken;
+import club.petgo.petgousers.domain.profile.Profile;
+import club.petgo.petgousers.transistory.ProfileForm;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ public class UserService implements IUserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private VerificationTokenRepository tokenRepository;
+    private ProfileRepository profileRepository;
 
     @Value("${bound}")
     protected int bound;
@@ -30,10 +34,12 @@ public class UserService implements IUserService {
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       VerificationTokenRepository verificationTokenRepository) {
+                       VerificationTokenRepository verificationTokenRepository,
+                       ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = verificationTokenRepository;
+        this.profileRepository = profileRepository;
     }
 
     public User registerNewUser(UserRegistrationForm form) {
@@ -42,6 +48,34 @@ public class UserService implements IUserService {
         userRepository.save(user);
         LOGGER.info("Registered new user [{}]", user.getId());
         return user;
+    }
+
+    public void createProfile(ProfileForm profileForm, User user) throws Exception {
+
+        if (profileRepository.existsByUserId(user.getId())) {
+            throw new Exception("Profile already exists");
+        }
+
+        Profile profile = new Profile();
+
+        switch (profileForm.getType()) {
+            case PET_OWNER:
+                user.addRole(User.Role.PET_OWNER);
+                profile = profileForm.toPetOwner(user);
+                break;
+            case SERVICE_PROVIDER:
+                user.addRole(User.Role.SERVICE_PROVIDER);
+                profile = profileForm.toServiceProvider(user);
+                break;
+            case OWNER_PROVIDER:
+                user.addRole(User.Role.PET_OWNER);
+                user.addRole(User.Role.SERVICE_PROVIDER);
+                profile = profileForm.toPetOwnerAndServiceProvider(user);
+                break;
+        }
+
+        profileRepository.save(profile);
+        userRepository.save(user);
     }
 
     protected String setDefaultUserName(String email) {

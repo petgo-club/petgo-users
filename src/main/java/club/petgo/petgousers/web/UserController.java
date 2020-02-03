@@ -3,9 +3,11 @@ package club.petgo.petgousers.web;
 import club.petgo.petgousers.data.UserRepository;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.domain.VerificationToken;
+import club.petgo.petgousers.domain.profile.Profile;
 import club.petgo.petgousers.event.OnRegistrationCompleteEvent;
 import club.petgo.petgousers.exception.EmailExistsException;
 import club.petgo.petgousers.service.UserService;
+import club.petgo.petgousers.transistory.ProfileForm;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
 import club.petgo.petgousers.transistory.UserResponse;
 import org.slf4j.Logger;
@@ -14,9 +16,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
@@ -41,7 +46,6 @@ public class UserController {
     }
 
     @PostMapping(value = "/registration", produces = "application/json")
-    @ResponseBody
     public ResponseEntity<UserResponse> register(@RequestBody @Valid UserRegistrationForm form)
             throws EmailExistsException {
         LOGGER.info("Processing new user [{}] registration request", form.getEmail());
@@ -93,8 +97,19 @@ public class UserController {
 
     // Only for testing purposes, to be deleted later
     @GetMapping(value = "/hello")
-    @ResponseBody
     public String hello() {
         return "Hello petgo!";
+    }
+
+    @PostMapping(value = "/profileCreate")
+    public void createProfile(@RequestBody ProfileForm profileForm, Principal principal)
+            throws Exception {
+        User user = userRepository.findByUserName(principal.getName());
+
+        if(user == null) {
+            throw new UserPrincipalNotFoundException(String.format("User [%s] not found", principal.getName()));
+        }
+
+        userService.createProfile(profileForm, user);
     }
 }

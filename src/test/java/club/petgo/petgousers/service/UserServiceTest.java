@@ -1,5 +1,6 @@
 package club.petgo.petgousers.service;
 
+import club.petgo.petgousers.data.ProfileRepository;
 import club.petgo.petgousers.data.UserRepository;
 import club.petgo.petgousers.data.VerificationTokenRepository;
 import club.petgo.petgousers.domain.User;
@@ -17,11 +18,13 @@ public class UserServiceTest {
     UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
     PasswordEncoder mockPasswordEncoder = Mockito.mock(PasswordEncoder.class);
     VerificationTokenRepository mockTokenRepository = Mockito.mock(VerificationTokenRepository.class);
+    ProfileRepository mockProfileRepository = Mockito.mock(ProfileRepository.class);
 
     UserService userService = new UserService(
             mockUserRepository,
             mockPasswordEncoder,
-            mockTokenRepository);
+            mockTokenRepository,
+            mockProfileRepository);
 
     UserRegistrationForm form = new UserRegistrationForm();
 
