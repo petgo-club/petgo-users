@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     boolean existsByUserId(UUID userId);
+    Profile findByUserId(UUID userId);
 }

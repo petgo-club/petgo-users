@@ -3,9 +3,9 @@ package club.petgo.petgousers.web;
 import club.petgo.petgousers.data.UserRepository;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.domain.VerificationToken;
-import club.petgo.petgousers.domain.profile.Profile;
 import club.petgo.petgousers.event.OnRegistrationCompleteEvent;
 import club.petgo.petgousers.exception.EmailExistsException;
+import club.petgo.petgousers.service.FileStorageService;
 import club.petgo.petgousers.service.UserService;
 import club.petgo.petgousers.transistory.ProfileForm;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
@@ -16,8 +16,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
@@ -95,12 +96,6 @@ public class UserController {
                 HttpStatus.OK);
     }
 
-    // Only for testing purposes, to be deleted later
-    @GetMapping(value = "/hello")
-    public String hello() {
-        return "Hello petgo!";
-    }
-
     @PostMapping(value = "/profileCreate")
     public void createProfile(@RequestBody ProfileForm profileForm, Principal principal)
             throws Exception {
@@ -111,5 +106,23 @@ public class UserController {
         }
 
         userService.createProfile(profileForm, user);
+    }
+
+    // Only for testing purposes, to be deleted later
+    @GetMapping(value = "/hello")
+    public String hello() {
+        return "Hello petgo!";
+    }
+
+    @PostMapping(value = "/imageUpload")
+    public void uploadImage(@RequestParam("image") MultipartFile image, Principal principal)
+            throws Exception {
+        User user = userRepository.findByUserName(principal.getName());
+
+        if(user == null) {
+            throw new UserPrincipalNotFoundException(String.format("User [%s] not found", principal.getName()));
+        }
+
+        userService.addProfilePicture(user, image);
     }
 }

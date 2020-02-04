@@ -15,7 +15,6 @@ public class ProfileForm {
     private String lastName;
     private String phone;
     private Address address;
-    private Image profilePicture;
     private int servicedDistance;
     private int hourlyFee;
 
@@ -25,7 +24,6 @@ public class ProfileForm {
                 this.lastName,
                 this.phone,
                 this.address,
-                this.profilePicture,
                 user);
     }
 
@@ -35,7 +33,6 @@ public class ProfileForm {
                 this.lastName,
                 this.phone,
                 this.address,
-                this.profilePicture,
                 user,
                 this.servicedDistance,
                 this.hourlyFee);
@@ -47,7 +44,6 @@ public class ProfileForm {
                 this.lastName,
                 this.phone,
                 this.address,
-                this.profilePicture,
                 user,
                 this.servicedDistance,
                 this.hourlyFee);

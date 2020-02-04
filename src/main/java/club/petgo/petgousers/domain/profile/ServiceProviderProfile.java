@@ -2,12 +2,14 @@ package club.petgo.petgousers.domain.profile;
 
 import club.petgo.petgousers.domain.User;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 @Data
 @Entity
+@NoArgsConstructor
 @PrimaryKeyJoinColumn(name = "Profile_id")
 public class ServiceProviderProfile extends Profile {
 
@@ -18,11 +20,10 @@ public class ServiceProviderProfile extends Profile {
                                   String lastName,
                                   String phone,
                                   Address address,
-                                  Image profilePicture,
                                   User user,
                                   int servicedDistance,
                                   int hourlyFee) {
-        super(firstName, lastName, phone, address, profilePicture, user);
+        super(firstName, lastName, phone, address, user);
         this.hourlyFee = hourlyFee;
         this.servicedDistance = servicedDistance;
     }

@@ -5,15 +5,19 @@ import club.petgo.petgousers.data.UserRepository;
 import club.petgo.petgousers.data.VerificationTokenRepository;
 import club.petgo.petgousers.domain.User;
 import club.petgo.petgousers.domain.VerificationToken;
+import club.petgo.petgousers.domain.profile.Image;
 import club.petgo.petgousers.domain.profile.Profile;
 import club.petgo.petgousers.transistory.ProfileForm;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.Random;
 
 @Service
@@ -23,6 +27,7 @@ public class UserService implements IUserService {
     private PasswordEncoder passwordEncoder;
     private VerificationTokenRepository tokenRepository;
     private ProfileRepository profileRepository;
+    private FileStorageService fileStorageService;
 
     @Value("${bound}")
     protected int bound;
@@ -35,11 +40,13 @@ public class UserService implements IUserService {
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        VerificationTokenRepository verificationTokenRepository,
-                       ProfileRepository profileRepository) {
+                       ProfileRepository profileRepository,
+                       FileStorageService fileStorageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenRepository = verificationTokenRepository;
         this.profileRepository = profileRepository;
+        this.fileStorageService= fileStorageService;
     }
 
     public User registerNewUser(UserRegistrationForm form) {
@@ -76,6 +83,38 @@ public class UserService implements IUserService {
 
         profileRepository.save(profile);
         userRepository.save(user);
+    }
+
+    public void addProfilePicture(User user, MultipartFile image) throws Exception {
+        Profile profile = profileRepository.findByUserId(user.getId());
+
+        if (profile == null) {
+            throw new Exception("Profile not found");
+        }
+
+        if (!isImageFormatValid(image.getOriginalFilename())) {
+            throw new Exception("Invalid image format");
+        }
+
+        String imageName = setImageName(image.getOriginalFilename(), user.getId().toString());
+        String imageLocation = fileStorageService.storeFile(image, imageName);
+        String imageFormat = imageName.substring(imageName.lastIndexOf('.') + 1).toUpperCase();
+        profile.setProfilePicture(new Image(imageName, imageLocation, imageFormat));
+        profileRepository.save(profile);
+    }
+
+
+    private boolean isImageFormatValid(String imageName) {
+        return Arrays.stream(Image.ImageFormat.values())
+                .anyMatch((format) -> format
+                        .name()
+                        .equals(imageName.substring(imageName.lastIndexOf('.') + 1).toUpperCase()));
+    }
+
+    private String setImageName(String fileName, String userId) {
+        return  fileName.substring(0, fileName.lastIndexOf('.')) +
+                userId +
+                fileName.substring(fileName.lastIndexOf('.'));
     }
 
     protected String setDefaultUserName(String email) {

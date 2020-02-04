@@ -2,6 +2,7 @@ package club.petgo.petgousers.web;
 
 import club.petgo.petgousers.data.UserRepository;
 import club.petgo.petgousers.exception.EmailExistsException;
+import club.petgo.petgousers.service.FileStorageService;
 import club.petgo.petgousers.service.UserService;
 import club.petgo.petgousers.transistory.UserRegistrationForm;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -5,6 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+#      ddl-auto: create-drop
     show-sql: true
 
 app:
@@ -40,6 +41,17 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+file:
+  upload-dir: src/main/resources/pictures
+
 app:
   url: http://localhost:8081/
 

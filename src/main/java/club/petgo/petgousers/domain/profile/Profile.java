@@ -34,13 +34,11 @@ public class Profile {
                    String lastName,
                    String phone,
                    Address address,
-                   Image profilePicture,
                    User user) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.address = address;
-        this.profilePicture = profilePicture;
         this.user = user;
     }
 }

@@ -19,12 +19,14 @@ public class UserServiceTest {
     PasswordEncoder mockPasswordEncoder = Mockito.mock(PasswordEncoder.class);
     VerificationTokenRepository mockTokenRepository = Mockito.mock(VerificationTokenRepository.class);
     ProfileRepository mockProfileRepository = Mockito.mock(ProfileRepository.class);
+    FileStorageService fileStorageService = Mockito.mock(FileStorageService.class);
 
     UserService userService = new UserService(
             mockUserRepository,
             mockPasswordEncoder,
             mockTokenRepository,
-            mockProfileRepository);
+            mockProfileRepository,
+            fileStorageService);
 
     UserRegistrationForm form = new UserRegistrationForm();
 
